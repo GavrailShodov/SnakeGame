@@ -26,13 +26,12 @@ namespace SnakeGame
             this.renderer = renderer;
             this.inputHandler = inputHandler;
             snake = new Snake(new Position(width / 2, height / 2));
-            rand = new Random(); // Initialize Random once
+            rand = new Random(); 
             food = GenerateFood();
             score = 0;
             level = 1;
-            speed = 100; // milliseconds
+            speed = 100; 
 
-            // Initial rendering of snake and food
             renderer.Render(snake.Head, null, food.Position, score, level);
         }
 
@@ -52,14 +51,22 @@ namespace SnakeGame
 
                     Position nextHeadPosition = new Position(snake.Head.X + snake.Direction.X, snake.Head.Y + snake.Direction.Y);
 
-                    // Check for collision with walls (including borders) or self
                     if (nextHeadPosition.X <= 0 || nextHeadPosition.X >= width + 1 ||
                         nextHeadPosition.Y <= 0 || nextHeadPosition.Y >= height + 1 ||
                         snake.IsCollision(nextHeadPosition))
                     {
-                        renderer.DisplayGameOver(width, height, score);
-                        Console.ReadKey();
-                        break;
+                        
+                        if(renderer.GameOver(width, height, score))
+                        {
+                            Console.Clear();
+                            GenerateNewSnake();
+                            renderer.DrawBorders();
+                            continue;
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
 
                     Position oldTail = snake.Body.Last.Value;
@@ -103,6 +110,15 @@ namespace SnakeGame
                 position = new Position(rand.Next(1, width + 1), rand.Next(1, height + 1));
             } while (snake.IsCollision(position));
             return new Food(position);
+        }
+
+        private void GenerateNewSnake()
+        {
+            snake = new Snake(new Position(width / 2, height / 2));
+            food = GenerateFood();
+            score = 0;
+            level = 1;
+            speed = 100;
         }
     }
 }
