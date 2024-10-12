@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SnakeGame
 {
@@ -35,7 +32,7 @@ namespace SnakeGame
         {
             Console.Clear();
             Console.SetCursorPosition(0, 0);
-            Console.WriteLine("+" + new string('-', width) + "+"); 
+            Console.WriteLine("+" + new string('-', width) + "+");
 
             for (int y = 1; y <= height; y++)
             {
@@ -44,10 +41,10 @@ namespace SnakeGame
             }
 
             Console.SetCursorPosition(0, height + 1);
-            Console.WriteLine("+" + new string('-', width) + "+"); 
+            Console.WriteLine("+" + new string('-', width) + "+");
         }
 
-        public void Render(Position newHead, Position oldTail, Position foodPosition, int score, int level)
+        public void Render(Position newHead, Position oldTail, Position foodPosition, List<Position> walls, int score, int level)
         {
             Console.SetCursorPosition(0, height + 2);
             Console.Write($"Score: {score} Level: {level}   ");
@@ -63,6 +60,12 @@ namespace SnakeGame
 
             Console.SetCursorPosition(foodPosition.X, foodPosition.Y);
             Console.Write("*");
+
+            foreach (var wall in walls)
+            {
+                Console.SetCursorPosition(wall.X, wall.Y);
+                Console.Write("#");
+            }
         }
 
         public bool GameOver(int width, int height, int score)
@@ -76,7 +79,7 @@ namespace SnakeGame
 
         public bool StartGame(int width, int height)
         {
-            bool start=false;
+            bool start = false;
 
             do
             {
@@ -90,7 +93,7 @@ namespace SnakeGame
                 {
                     start = true;
                 }
-            }while (!start);
+            } while (!start);
             return start;
         }
     }

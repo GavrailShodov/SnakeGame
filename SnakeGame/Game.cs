@@ -18,6 +18,7 @@ namespace SnakeGame
         private int level;
         private int speed;
         private Random rand;
+        private List<Position> walls;
 
         public Game(int width, int height, IRenderer renderer, IInputHandler inputHandler)
         {
@@ -26,13 +27,14 @@ namespace SnakeGame
             this.renderer = renderer;
             this.inputHandler = inputHandler;
             snake = new Snake(new Position(width / 2, height / 2));
-            rand = new Random(); 
+            rand = new Random();
             food = GenerateFood();
             score = 0;
             level = 1;
-            speed = 100; 
+            speed = 100;
+            walls = new List<Position>(); 
 
-            renderer.Render(snake.Head, null, food.Position, score, level);
+            renderer.Render(snake.Head, null, food.Position, walls, score, level);
         }
 
         public void Run()
@@ -53,10 +55,10 @@ namespace SnakeGame
 
                     if (nextHeadPosition.X <= 0 || nextHeadPosition.X >= width + 1 ||
                         nextHeadPosition.Y <= 0 || nextHeadPosition.Y >= height + 1 ||
-                        snake.IsCollision(nextHeadPosition))
+                        snake.IsCollision(nextHeadPosition) ||
+                        IsWallCollision(nextHeadPosition))
                     {
-                        
-                        if(renderer.GameOver(width, height, score))
+                        if (renderer.GameOver(width, height, score))
                         {
                             Console.Clear();
                             GenerateNewSnake();
@@ -81,15 +83,15 @@ namespace SnakeGame
                         {
                             level++;
                             speed = Math.Max(20, speed - 20);
-
+                            AddRandomWall();
                         }
 
-                        renderer.Render(nextHeadPosition, null, food.Position, score, level);
+                        renderer.Render(nextHeadPosition, null, food.Position, walls, score, level);
                     }
                     else
                     {
                         snake.Move();
-                        renderer.Render(nextHeadPosition, oldTail, food.Position, score, level);
+                        renderer.Render(nextHeadPosition, oldTail, food.Position, walls, score, level);
                     }
                 }
             }
@@ -97,6 +99,7 @@ namespace SnakeGame
             {
                 Console.Clear();
                 Console.WriteLine("An error occurred:");
+                Console.WriteLine(ex.Message);
                 Console.WriteLine("Press any key to exit...");
                 Console.ReadKey();
             }
@@ -108,7 +111,7 @@ namespace SnakeGame
             do
             {
                 position = new Position(rand.Next(1, width + 1), rand.Next(1, height + 1));
-            } while (snake.IsCollision(position));
+            } while (snake.IsCollision(position) || IsWallCollision(position));
             return new Food(position);
         }
 
@@ -119,6 +122,58 @@ namespace SnakeGame
             score = 0;
             level = 1;
             speed = 100;
+            walls.Clear();
+        }
+
+        private void AddRandomWall()
+        {
+            bool isHorizontal = rand.Next(0, 2) == 0;
+
+            int wallLength = rand.Next(1, 16);
+
+            Position startPosition;
+            bool isValidPosition = false;
+
+            do
+            {
+                if (isHorizontal)
+                {
+                    startPosition = new Position(rand.Next(1, width - wallLength + 1), rand.Next(1, height + 1));
+                }
+                else
+                {
+                    startPosition = new Position(rand.Next(1, width + 1), rand.Next(1, height - wallLength + 1));
+                }
+
+                isValidPosition = true;
+                for (int i = 0; i < wallLength; i++)
+                {
+                    Position wallSegment = isHorizontal
+                        ? new Position(startPosition.X + i, startPosition.Y)
+                        : new Position(startPosition.X, startPosition.Y + i);
+
+                    if (snake.IsCollision(wallSegment) || IsWallCollision(wallSegment) ||
+                        (food.Position.X == wallSegment.X && food.Position.Y == wallSegment.Y))
+                    {
+                        isValidPosition = false;
+                        break;
+                    }
+                }
+            } while (!isValidPosition);
+
+            for (int i = 0; i < wallLength; i++)
+            {
+                Position wallSegment = isHorizontal
+                    ? new Position(startPosition.X + i, startPosition.Y)
+                    : new Position(startPosition.X, startPosition.Y + i);
+
+                walls.Add(wallSegment);
+            }
+        }
+
+        private bool IsWallCollision(Position position)
+        {
+            return walls != null && walls.Any(w => w.X == position.X && w.Y == position.Y);
         }
     }
 }

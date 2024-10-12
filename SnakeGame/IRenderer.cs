@@ -8,7 +8,7 @@ namespace SnakeGame
 {
     public interface IRenderer
     {
-        void Render(Position newHead, Position oldTail, Position foodPosition, int score, int level);
+        void Render(Position newHead, Position oldTail, Position foodPosition, List<Position> walls, int score, int level);
         void DrawBorders();
         bool GameOver(int width, int height, int score);
         bool StartGame(int width, int height);
