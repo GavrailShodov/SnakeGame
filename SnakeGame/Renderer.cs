@@ -70,11 +70,15 @@ namespace SnakeGame
 
         public bool GameOver(int width, int height, int score)
         {
-            Console.Clear();
-            Console.WriteLine("Game Over!");
-            Console.WriteLine($"Final Score: {score}");
-            Console.WriteLine("Press Arrow up to restart");
-            return Console.ReadKey(true).Key == ConsoleKey.UpArrow;
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("Game Over!");
+                Console.WriteLine($"Final Score: {score}");
+                Console.WriteLine("Press Arrow up to restart");
+            } while (!(Console.ReadKey(true).Key == ConsoleKey.UpArrow));
+
+            return true;
         }
 
         public bool StartGame(int width, int height)
