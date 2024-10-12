@@ -5,8 +5,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
-int width = Console.LargestWindowWidth / 2;
-int height = Console.LargestWindowHeight / 2;
+int width = 40;
+int height = 20;
 
 IRenderer renderer = new Renderer(width, height);
 IInputHandler inputHandler = new InputHandler();

@@ -10,7 +10,7 @@ namespace SnakeGame
     {
         void Render(Position newHead, Position oldTail, Position foodPosition, List<Position> walls, int score, int level);
         void DrawBorders();
-        bool GameOver(int width, int height, int score);
+        bool GameOver(int width, int height, int score,int highestScore);
         bool StartGame(int width, int height);
     }
 }

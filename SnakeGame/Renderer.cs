@@ -68,13 +68,14 @@ namespace SnakeGame
             }
         }
 
-        public bool GameOver(int width, int height, int score)
+        public bool GameOver(int width, int height, int score,int highestScore)
         {
             do
             {
                 Console.Clear();
                 Console.WriteLine("Game Over!");
                 Console.WriteLine($"Final Score: {score}");
+                Console.WriteLine($"Highest Score: {highestScore}");
                 Console.WriteLine("Press Arrow up to restart");
             } while (!(Console.ReadKey(true).Key == ConsoleKey.UpArrow));
 

@@ -19,6 +19,7 @@ namespace SnakeGame
         private int speed;
         private Random rand;
         private List<Position> walls;
+        private int highestScore;
 
         public Game(int width, int height, IRenderer renderer, IInputHandler inputHandler)
         {
@@ -32,6 +33,7 @@ namespace SnakeGame
             score = 0;
             level = 1;
             speed = 100;
+            highestScore = 0;
             walls = new List<Position>(); 
 
             renderer.Render(snake.Head, null, food.Position, walls, score, level);
@@ -58,7 +60,11 @@ namespace SnakeGame
                         snake.IsCollision(nextHeadPosition) ||
                         IsWallCollision(nextHeadPosition))
                     {
-                        if (renderer.GameOver(width, height, score))
+                        if (highestScore < score)
+                        {
+                            highestScore = score;
+                        }
+                        if (renderer.GameOver(width, height, score,highestScore))
                         {
                             Console.Clear();
                             GenerateNewSnake();
